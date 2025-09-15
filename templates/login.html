@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Campus Guardian - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='additional.css') }}">
+</head>
+<body>
+    <div class="login-modal-overlay">
+        <div class="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
+            <div class="login-header">
+                <h3 id="login-title">Campus Guardian Login</h3>
+            </div>
+
+            <form id="login-form" class="login-form" novalidate>
+                <div class="form-group">
+                    <label for="user_id">User ID:</label>
+                    <input type="text" id="user_id" name="user_id" required placeholder="e.g., 2024001 or teacher001" autocomplete="username" inputmode="text">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter password" autocomplete="current-password" inputmode="text">
+                </div>
+
+                <div class="login-actions">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+
+                <div id="login-error" class="error" style="display:none; margin-top:1rem" role="alert" aria-live="assertive"></div>
+
+                <div class="login-help" aria-hidden="false">
+                    <p><strong>Demo Credentials:</strong></p>
+                    <p>Student: ID: 2024001, Pass: student123</p>
+                    <p>Teacher: ID: teacher001, Pass: teacher123</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

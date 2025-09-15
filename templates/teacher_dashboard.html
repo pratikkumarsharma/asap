@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Campus Guardian - Teacher Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='additional.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header" role="banner">
+            <div class="header-content">
+                <div class="logo-section" aria-hidden="false">
+                    <div class="logo-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                    </div>
+                    <div class="logo-text">
+                        <div class="logo-title">Campus Guardian</div>
+                        <div class="logo-subtitle">Smart Safety System</div>
+                    </div>
+                </div>
+
+                <div class="header-actions" role="navigation" aria-label="Header actions">
+                    <button class="theme-toggle" id="themeToggle" aria-pressed="false" aria-label="Toggle Theme">
+                        <span id="themeIcon">🌙</span>
+                    </button>
+
+                    <div class="user-profile" aria-live="polite">
+                        <div class="user-avatar" id="userAvatar" role="button" tabindex="0" aria-label="User avatar"></div>
+                        <div class="user-info" id="headerUserInfo" style="display:none"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="navigation" role="navigation" aria-label="Main navigation">
+            <div class="nav-content" id="navContent">
+                <div class="nav-item active" data-section="dashboard" role="button" tabindex="0">Dashboard</div>
+                <div class="nav-item" data-section="attendance" role="button" tabindex="0">Attendance</div>
+                <div class="nav-item" data-section="emergency" role="button" tabindex="0">Emergency</div>
+                <div class="nav-item" data-section="chatbot" role="button" tabindex="0">Chatbot</div>
+            </div>
+        </nav>
+
+        <main class="main-content" role="main">
+            <section id="dashboard" class="section active" aria-labelledby="dashboard-heading">
+                <h2 id="dashboard-heading">Teacher Dashboard</h2>
+            </section>
+
+            <section id="attendance" class="section" aria-labelledby="attendance-heading">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title" id="attendance-heading">Attendance System</h2>
+                    </div>
+                    <div class="card-body" id="attendance-card-body">
+                        </div>
+                </div>
+
+                <div id="teacher-analytics-display" class="card" style="display:none;">
+                    <div class="card-header">
+                        <h2 class="card-title">Attendance Analytics (Last 30 Days)</h2>
+                    </div>
+                    <div class="card-body" id="analytics-content">
+                        </div>
+                </div>
+            </section>
+
+            <section id="emergency" class="section" aria-labelledby="emergency-heading">
+                <h2 id="emergency-heading" class="card-title">Emergency</h2>
+                <div class="card card-body">
+                    <p>Emergency tools and quick actions will appear here.</p>
+                </div>
+            </section>
+
+            <section id="chatbot" class="section" aria-labelledby="chatbot-heading">
+                <h2 id="chatbot-heading" class="card-title">Chatbot</h2>
+                <div class="card card-body">
+                    <p>Campus Guardian AI Assistant</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='html5-qrcode.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='qrcode.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
