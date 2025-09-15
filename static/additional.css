@@ -1,0 +1,239 @@
+/* --- Additional styles for backend integration --- */
+
+/* Login Modal */
+.login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: modalFadeIn 0.3s ease;
+}
+
+.login-modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.login-header h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-control {
+    padding: 0.75rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.login-actions {
+    margin-top: 1rem;
+}
+
+.login-help {
+    background: var(--gray-50);
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    line-height: 1.5;
+}
+
+.login-help p {
+    margin: 0.25rem 0;
+}
+
+.login-help p:first-child {
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: 0.5rem;
+}
+
+/* Dark mode login modal */
+body.dark-mode .login-modal { background: var(--gray-800); color: var(--gray-100); }
+body.dark-mode .login-header { border-bottom-color: var(--gray-700); }
+body.dark-mode .form-group label { color: var(--gray-300); }
+body.dark-mode .form-group input, body.dark-mode .form-control { background: var(--gray-700); border-color: var(--gray-600); color: var(--white); }
+body.dark-mode .form-group input::placeholder, body.dark-mode .form-control::placeholder { color: var(--gray-400); }
+body.dark-mode .login-help { background: var(--gray-700); color: var(--gray-300); }
+body.dark-mode .login-help p:first-child { color: var(--gray-100); }
+
+
+/* --- Teacher QR Controls --- */
+.teacher-qr-controls {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.qr-settings {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: var(--gray-50);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+}
+
+.qr-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+    box-shadow: var(--shadow-md);
+}
+
+#qr-display-container {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid var(--gray-200);
+    text-align: center;
+}
+
+.qr-info {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.qr-info h4 {
+    color: var(--primary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.qr-info p {
+    color: var(--gray-600);
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+}
+
+.qr-display {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1rem auto;
+    max-width: 400px;
+    border: 2px solid var(--primary);
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-token-info {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    font-family: monospace;
+    margin-top: 1rem;
+}
+
+.qr-note {
+    color: var(--warning);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 1rem 0 0 0;
+    padding: 0.75rem;
+    background: rgba(234, 88, 12, 0.1);
+    border-radius: 8px;
+}
+
+.qr-placeholder {
+    color: var(--gray-400);
+    font-style: italic;
+}
+
+/* Student QR Scanner Demo */
+.qr-scanner-demo {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border: 1px solid var(--gray-200);
+}
+.qr-scanner-demo h4 { color: var(--primary); margin-bottom: 1rem; font-size: 1.1rem; }
+.qr-scanner-demo p { color: var(--gray-600); margin-bottom: 1rem; font-size: 0.9rem; }
+.qr-scanner-demo textarea { font-family: 'Courier New', monospace; font-size: 0.85rem; resize: vertical; width: 100%; margin-bottom: 1rem; padding: 0.5rem; }
+
+/* Dark mode for QR components */
+body.dark-mode .qr-settings, body.dark-mode #qr-display-container, body.dark-mode .qr-scanner-demo { background: var(--gray-700); border-color: var(--gray-600); }
+body.dark-mode .qr-display { background: var(--gray-800); }
+body.dark-mode .qr-info p, body.dark-mode .qr-token-info { color: var(--gray-300); }
+body.dark-mode .qr-note { background: rgba(234, 88, 12, 0.2); color: #fed7aa; }
+body.dark-mode .qr-scanner-demo p { color: var(--gray-300); }
+body.dark-mode .qr-scanner-demo textarea { background: var(--gray-800); border-color: var(--gray-600); color: var(--white); }
+
+/* --- Messages & Animations --- */
+.success { color: var(--success) !important; background: rgba(22, 163, 74, 0.1); padding: 0.5rem; border-radius: 6px; border: 1px solid rgba(22, 163, 74, 0.3); }
+.error { color: var(--danger) !important; background: rgba(220, 38, 38, 0.1); padding: 0.5rem; border-radius: 6px; border: 1px solid rgba(220, 38, 38, 0.3); }
+
+@keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalSlideIn { from { opacity: 0; transform: translateY(-30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* --- Responsive adjustments --- */
+@media (max-width: 640px) {
+    .qr-settings { grid-template-columns: 1fr; }
+    .qr-actions { flex-direction: column; align-items: stretch; }
+    .qr-display { padding: 1rem; max-width: 100%; }
+    .login-modal { margin: 1rem; width: calc(100% - 2rem); }
+}
