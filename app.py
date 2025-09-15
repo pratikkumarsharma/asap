@@ -4,7 +4,7 @@ import hashlib
 import sqlite3
 import threading
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 from flask_cors import CORS
@@ -156,8 +156,8 @@ class QRCodeManager:
                 "SELECT session_id, class_id, teacher_id, expires_at FROM qr_sessions WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1"
             ).fetchone()
             if row:
-                expires_at = datetime.fromisoformat(row["expires_at"])
-                if datetime.utcnow() < expires_at:
+                expires_at = datetime.fromisoformat(row["expires_at"]).replace(tzinfo=timezone.utc)
+                if datetime.now(timezone.utc) < expires_at:
                     self.active_session = {
                         "session_id": row["session_id"],
                         "class_id": row["class_id"],
@@ -173,7 +173,7 @@ class QRCodeManager:
     def start_session(self, class_id, teacher_id, duration_minutes=60):
         with self.lock:
             session_id = str(uuid.uuid4())
-            expires_at = datetime.utcnow() + timedelta(minutes=int(duration_minutes))
+            expires_at = datetime.now(timezone.utc) + timedelta(minutes=int(duration_minutes))
             conn = db_manager.get_connection()
             try:
                 conn.execute("UPDATE qr_sessions SET is_active = 0 WHERE teacher_id = ? AND is_active = 1", (teacher_id,))
@@ -205,7 +205,7 @@ class QRCodeManager:
         return True
 
     def _ensure_session_is_active(self):
-        if not self.active_session or datetime.utcnow() >= self.active_session.get("expires_at", datetime.min):
+        if not self.active_session or datetime.now(timezone.utc) >= self.active_session.get("expires_at", datetime.min.replace(tzinfo=timezone.utc)):
             self._load_active_session_from_db()
 
     def get_current_token(self):
@@ -432,7 +432,7 @@ def scan_qr():
 
     conn = db_manager.get_connection()
     try:
-        today = datetime.utcnow().date().isoformat()
+        today = datetime.now(timezone.utc).date().isoformat()
         class_id = qr_manager.active_session.get("class_id") if qr_manager.active_session else None
         if not class_id:
             return jsonify({"success": False, "message": "The QR session is no longer active."}), 400
