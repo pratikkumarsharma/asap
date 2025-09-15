@@ -212,31 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const qrData = JSON.stringify({ token: tokenData.token, session_id: tokenData.session_id, timestamp: Date.now() });
             if (qrDisplay) {
                 qrDisplay.innerHTML = '';
-                try { new QRCode(qrDisplay, { text: qrData, width: 200, height: 200 }); }
-                catch (e) { qrDisplay.textContent = tokenData.token; }
-            }
-            if (tokenData.expires_at && !currentQRSession.expires_at) {
-                currentQRSession.expires_at = new Date(tokenData.expires_at);
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(qrDisplay, { text: qrData, width: 200, height: 200 });
+                } else {
+                    qrDisplay.textContent = tokenData.token;
+                    console.error("QRCode library is not loaded.");
+                }
             }
             updateQRInfo();
         } catch (err) {
+            console.error(err);
             clearQRSession();
         }
     };
 
-    const updateQRInfo = () => {
-        if (!currentQRSession) return;
-        const expiresInfo = document.getElementById('qr-expires-info');
-        const now = new Date();
-        const expiresAt = currentQRSession.expires_at ? new Date(currentQRSession.expires_at) : null;
-        const secondsLeft = expiresAt ? Math.max(0, Math.floor((expiresAt - now) / 1000)) : 0;
-        const minutes = Math.floor(secondsLeft / 60);
-        const sec = String(secondsLeft % 60).padStart(2, '0');
-        if (expiresInfo) {
-            expiresInfo.textContent = secondsLeft > 0 ? `Expires in ${minutes}:${sec}` : 'Session expired.';
-        }
-        if (secondsLeft <= 0) clearQRSession();
-    };
 
     const stopQRSession = async () => {
         try { await apiCall('/teacher/stop-qr', { method: 'POST' }); } catch {}
@@ -252,6 +241,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const stopBtn = document.getElementById('stop-qr-btn');
         if (genBtn) genBtn.style.display = 'inline-flex';
         if (stopBtn) stopBtn.style.display = 'none';
+    };
+    
+    const updateQRInfo = () => {
+        const expiresEl = document.getElementById('qr-expires-info');
+        if (expiresEl && currentQRSession) {
+            const remaining = Math.round((currentQRSession.expires_at - new Date()) / 1000);
+            if (remaining > 0) {
+                expiresEl.textContent = `Session for ${currentQRSession.class_name} expires in ${Math.ceil(remaining / 60)} minutes.`;
+            } else {
+                expiresEl.textContent = 'Session expired.';
+                clearQRSession();
+            }
+        }
     };
 
     // -------- Student Controls with native fallback --------
@@ -337,38 +339,70 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const startNativeFallback = async () => {
-        if (!('mediaDevices' in navigator)) { alert('Camera not supported.'); resetQRScanner(); return; }
-        const videoEl = document.createElement('video');
-        videoEl.setAttribute('autoplay', true);
-        videoEl.setAttribute('playsinline', true);
-        document.getElementById('qr-reader').innerHTML = '';
-        document.getElementById('qr-reader').appendChild(videoEl);
+    if (!('mediaDevices' in navigator)) { 
+        alert('Camera not supported.'); 
+        resetQRScanner(); 
+        return; 
+    }
 
-        try {
-            nativeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-            videoEl.srcObject = nativeStream;
-            await videoEl.play();
+    const videoEl = document.createElement('video');
+    videoEl.setAttribute('autoplay', true);
+    videoEl.setAttribute('playsinline', true);
+    document.getElementById('qr-reader').innerHTML = '';
+    document.getElementById('qr-reader').appendChild(videoEl);
 
-            if (!('BarcodeDetector' in window)) {
-                alert('BarcodeDetector API not supported.');
-                resetQRScanner();
-                return;
-            }
+    try {
+        nativeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        videoEl.srcObject = nativeStream;
+        await videoEl.play();
 
+        if ('BarcodeDetector' in window) {
             const barcodeDetector = new BarcodeDetector({ formats: ['qr_code'] });
 
             const scanFrame = async () => {
-                if (!videoEl || videoEl.readyState !== 4) { fallbackAnimationFrame = requestAnimationFrame(scanFrame); return; }
+                if (!videoEl || videoEl.readyState !== 4) { 
+                    fallbackAnimationFrame = requestAnimationFrame(scanFrame); 
+                    return; 
+                }
                 try {
                     const barcodes = await barcodeDetector.detect(videoEl);
-                    if (barcodes.length > 0) { processScannedData(barcodes[0].rawValue); resetQRScanner(); return; }
-                } catch (e) { console.warn("Barcode detection error:", e); }
+                    if (barcodes.length > 0) { 
+                        processScannedData(barcodes[0].rawValue); 
+                        resetQRScanner(); 
+                        return; 
+                    }
+                } catch (e) { 
+                    console.warn("Barcode detection error:", e); 
+                }
                 fallbackAnimationFrame = requestAnimationFrame(scanFrame);
             };
             scanFrame();
 
-        } catch (err) { alert('Cannot access camera: ' + err.message); resetQRScanner(); }
-    };
+        } else {
+            // Fallback for browsers without BarcodeDetector
+            await ensureHtml5QrCodeLoaded();
+            html5QrCode = new Html5Qrcode('qr-reader');
+            isScanning = true;
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                decodedText => { 
+                    isScanning = false; 
+                    html5QrCode.stop().finally(() => { html5QrCode = null; processScannedData(decodedText); }); 
+                },
+                errorMessage => console.warn("QR scan error (fallback):", errorMessage)
+            ).catch(err => {
+                console.warn("Html5Qrcode fallback start failed:", err);
+                resetQRScanner();
+            });
+        }
+
+    } catch (err) { 
+        alert('Cannot access camera: ' + err.message); 
+        resetQRScanner(); 
+    }
+};
+
 
     const processScannedData = async (qrData) => {
         const resultEl = document.getElementById('qr-scan-result');
